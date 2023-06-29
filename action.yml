@@ -1,0 +1,81 @@
+name: "build-dotnet-framework"
+description: "GitHub Action to build .NET Framework project / solution."
+author: "Kaushik LS"
+branding:
+  icon: "check-circle"
+  color: "white"
+
+inputs:
+  source:
+    description: "Project / Solution to build."
+    required: true
+
+  version:
+    description: "Release version."
+    required: true
+  
+  configuration:
+    description: "Build Configuration"
+    required: false
+    default: "Release"
+  
+  release:
+    description: "If true, packs and pushes a tagged releases."
+    required: false
+    default: false
+
+  release-type:
+    description: "File type of release."
+    required: ${{ inputs.release }}
+    default: 'zip'
+
+  project-dir:
+    description: "Location of binaries."
+    required: ${{ inputs.release }}
+    default: "NO PROJECT DIRECTORY"
+
+  token:
+    description: "Personal Access Token (PAT) to deploy release."
+    required: ${{ inputs.release }}
+    default: ${{ secrets.GITHUB_TOKEN }}
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Install IronPython
+      shell: pwsh
+      if: ${{inputs.ironpython == 'true'}}
+      run: choco install ironpython --version=2.7.12
+
+    - name: Setup MsBuild
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore NuGet Packages
+      run: nuget restore ${{ inputs.source }}
+
+    - name: Build Solution
+      id: solution
+      run: "msbuild ${{ inputs.source }} /p:Configuration=${{ inputs.configuration }}"
+    
+    - name: Pack Binaries
+      if: ${{ inputs.release }}
+      uses: TheDoctor0/zip-release@0.7.1
+      with:
+        type: ${{ inputs.release-type }}
+        directory: ${{ inputs.project-dir }}
+        filename: Plugin-v${{ inputs.version }}.${{ inputs.release-type }}
+
+    - name: Deploy Release
+      if: ${{ inputs.release }}
+      uses: ncipollo/release-action@v1.12.0
+      with:
+        name: Plugin-v${{ inputs.version }}.${{ inputs.release-type }}
+        tag: v${{ inputs.version }}
+        artifacts: ${{ inputs.project-dir }}/Plugin-v${{ inputs.version }}.${{ inputs.release-type }}
+        allowUpdates: false
+        makeLatest: true
+        token: ${{ inputs.TOKEN }}

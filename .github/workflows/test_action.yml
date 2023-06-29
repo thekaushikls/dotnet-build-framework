@@ -1,0 +1,26 @@
+name: Test Action
+
+on:
+  push:
+    branches: "*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Build Plugin
+        uses: ./
+        with:
+          source: sample/sampleProject.sln
+          version: 0.0.1-alpha
+          configuration: Release
+          release: true
+          release-type: zip
+          project-dir: sample/bin/Release/net48
+          token: ${{ secrets.GITHUB_TOKEN }}
