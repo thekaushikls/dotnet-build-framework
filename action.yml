@@ -55,10 +55,12 @@ runs:
       uses: NuGet/setup-nuget@v1
 
     - name: Restore NuGet Packages
+      shell: pwsh
       run: nuget restore ${{ inputs.source }}
 
     - name: Build Solution
       id: solution
+      shell: pwsh
       run: "msbuild ${{ inputs.source }} /p:Configuration=${{ inputs.configuration }}"
     
     - name: Pack Binaries
