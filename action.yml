@@ -36,8 +36,7 @@ inputs:
 
   token:
     description: "Personal Access Token (PAT) to deploy release."
-    required: false
-    default: ${{ secrets.GITHUB_TOKEN }}
+    required: true
 
 runs:
   using: "composite"
