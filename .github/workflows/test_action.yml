@@ -17,10 +17,10 @@ jobs:
       - name: Build Plugin
         uses: ./
         with:
-          source: sample/SampleConsoleApp/HelloWorldSampleProject.sln
+          source: ./sample/HelloWorldSampleProject/HelloWorldSampleProject.sln
           version: 0.0.1-alpha
           configuration: Release
           release: true
           release-type: zip
-          project-dir: sample/SampleConsoleApp/bin/Release/
+          project-dir: ./sample/SampleConsoleApp/bin/Release/
           token: ${{ secrets.GITHUB_TOKEN }}
