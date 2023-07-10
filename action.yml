@@ -26,17 +26,17 @@ inputs:
 
   release-type:
     description: "File type of release."
-    required: ${{ inputs.release }}
+    required: false
     default: 'zip'
 
   project-dir:
     description: "Location of binaries."
-    required: ${{ inputs.release }}
+    required: false
     default: "NO PROJECT DIRECTORY"
 
   token:
     description: "Personal Access Token (PAT) to deploy release."
-    required: ${{ inputs.release }}
+    required: false
     default: ${{ secrets.GITHUB_TOKEN }}
 
 runs:
